@@ -1,0 +1,631 @@
+SQL> --==============================  RUN ======================================---
+SQL> 
+SQL> /*(i) TDS would like to be able to easily determine the total number of times each police officer has booked a driver for a
+SQL>traffic offence. Add a new attribute which will record the number of times each officer has booked drivers.
+SQL>This attribute must be initialised to the correct current number of times each officer has booked drivers based on the data 
+SQL>which is currently stored in the system. [4 marks]
+SQL>*/
+SQL> ALTER TABLE officer ADD officer_book_count NUMBER(5);
+
+Table OFFICER altered.
+
+SQL> 
+SQL> COMMENT ON COLUMN officer.officer_book_count IS
+  2      'No. of times officer booked drivers';
+
+Comment created.
+
+SQL> 
+SQL> UPDATE officer
+  2  SET
+  3      officer_book_count = (
+  4          SELECT
+  5              COUNT(*)
+  6          FROM
+  7              offence
+  8          WHERE
+  9              officer_id = officer.officer_id
+ 10      );
+
+21 rows updated.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> ALTER TABLE officer MODIFY
+  2      officer_book_count NUMBER(5) NOT NULL;
+
+Table OFFICER altered.
+
+SQL> 
+SQL> 
+SQL> /*(ii) The problem TDS might face with the current database is if an offence is revoked for some valid reason, it is impossible
+SQL>for them to keep the offence information for the revoked offence in the database. TDS would like to fix this problem such that
+SQL>they are able to keep information about a revoked offence along with the other required information such as when it was revoked,
+SQL>who revoked the offence and the reason for revocation. For quick access, it has been decided that a column is also required to
+SQL>indicate Yes or No if an offence has been revoked or not. There will always be one reason that can be associated with a revocation.
+SQL>TDS will not be able to add all the reasons for a revocation of the offences initially and so your solution should allow them to
+SQL>add new reasons as and when there is a need. At this stage, the only reasons for revocation of an offence TDS is interested in
+SQL>recording are First offence exceeding the speed limit by less than 10km/h (FOS), Faulty equipment used (FEU), Driver objection
+SQL>upheld (DOU), Court hearing (COH), and Error in proceedings (EIP). Each reason code will have exactly 3 letters.
+SQL>When providing the solution, you must consider the following:
+SQL>only around 1% of offences recorded are revoked and there can be hundreds of thousands of offences in the offence table at any
+SQL>given time,
+SQL>all existing offences, after implementing this requirement, must automatically be recorded as not revoked,
+SQL>appeals are made by completing a paper form and sending the completed form to TDS either by fax or mail and, at this stage,
+SQL>there is no need to record unsuccessful appeals in the database. [6 marks]
+SQL>*/
+SQL> --For dropping the existing tables and the new column
+SQL> 
+SQL> --DROP TABLE reason CASCADE CONSTRAINTS PURGE;
+SQL> --DROP TABLE revocation CASCADE CONSTRAINTS PURGE;
+SQL> --ALTER TABLE offence DROP COLUMN off_revoked;
+SQL> 
+SQL> ALTER TABLE offence ADD (
+  2      off_revoked VARCHAR2(3) DEFAULT 'No'
+  3          CONSTRAINT off_off_revoke_chk CHECK ( off_revoked IN (
+  4              'Yes',
+  5              'No'
+  6          ) )
+  7  );
+
+Table OFFENCE altered.
+
+SQL> 
+SQL> COMMENT ON COLUMN offence.off_revoked IS
+  2      'If offence revoked';
+
+Comment created.
+
+SQL> 
+SQL> -- The following is not required in this solution as the column has a check 
+SQL> -- and a default value
+SQL> 
+SQL> ALTER TABLE offence MODIFY (
+  2      off_revoked NOT NULL
+  3  );
+
+Table OFFENCE altered.
+
+SQL> 
+SQL> 
+SQL> CREATE TABLE reason (
+  2      reason_code   CHAR(3),
+  3      reason_desc   VARCHAR2(80) NOT NULL
+  4  );
+
+Table REASON created.
+
+SQL> 
+SQL> COMMENT ON COLUMN reason.reason_code IS
+  2      'Reason code';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN reason.reason_desc IS
+  2      'Reason description';
+
+Comment created.
+
+SQL> 
+SQL> ALTER TABLE reason ADD CONSTRAINT reason_pk PRIMARY KEY ( reason_code );
+
+Table REASON altered.
+
+SQL> 
+SQL> INSERT INTO reason VALUES (
+  2      'FOS',
+  3      'First offence exceeding the speed limit by less than 10km/h'
+  4  );
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO reason VALUES (
+  2      'FEU',
+  3      'Faulty equipment used'
+  4  );
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO reason VALUES (
+  2      'DOU',
+  3      'Driver objection upheld'
+  4  );
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO reason VALUES (
+  2      'COH',
+  3      'Court hearing'
+  4  );
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO reason VALUES (
+  2      'EIP',
+  3      'Error in proceedings'
+  4  );
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> --date revoked, who revoked the offence and the reason for revocation
+SQL> 
+SQL> CREATE TABLE revocation (
+  2      off_no        NUMBER(8),
+  3      revo_date     DATE NOT NULL,
+  4      reason_code   CHAR(3) NOT NULL,
+  5      officer_id    NUMBER(8) NOT NULL
+  6  );
+
+Table REVOCATION created.
+
+SQL> 
+SQL> COMMENT ON COLUMN revocation.off_no IS
+  2      'Offence Number';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN revocation.revo_date IS
+  2      'Revocation Date';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN revocation.reason_code IS
+  2      'Reason code';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN revocation.officer_id IS
+  2      'Officer ID';
+
+Comment created.
+
+SQL> 
+SQL> 
+SQL> ALTER TABLE revocation ADD CONSTRAINT revocation_pk PRIMARY KEY ( off_no );
+
+Table REVOCATION altered.
+
+SQL> 
+SQL> ALTER TABLE revocation ADD CONSTRAINT revocation_reason_fk FOREIGN KEY ( reason_code )
+  2      REFERENCES reason;
+
+Table REVOCATION altered.
+
+SQL> 
+SQL> ALTER TABLE revocation ADD CONSTRAINT revocation_officer_fk FOREIGN KEY ( officer_id )
+  2      REFERENCES officer;
+
+Table REVOCATION altered.
+
+SQL> 
+SQL> ALTER TABLE revocation ADD CONSTRAINT revocation_offence_fk FOREIGN KEY ( off_no )
+  2      REFERENCES offence;
+
+Table REVOCATION altered.
+
+SQL> 
+SQL> 
+SQL> /*(iii) TDS has found that having just the vehicle's main colour in the database, in some cases, is inadequate in helping
+SQL>identify a vehicle that has been involved in a traffic offence. As a consequence, they have decided to now also record if any
+SQL>outer part other than the body of the vehicle is of a different colour. At this stage, the only other parts TDS is interested in
+SQL>recording the colour of are the Spoiler (SP), Bumper (BM) and Grilles (GR) but this may change if the need arises and so it should
+SQL>be able to be changed easily. Each outer part code will have exactly 2 letters. Where the colour of grilles, spoiler (if any) or
+SQL>Bumper is the same as that of the body colour, there is no need to record anything in the database. 
+SQL>TDS is also intending to find a solution such that new colours can be easily introduced when a manufacturer releases a new colour.
+SQL>Each colour must be identified by a unique colour number (which is auto generated by the system) and has its colour description
+SQL>recorded as shown below (sample data only shown).
+SQL>
+SQL>This data must be collected from the current state of the vehicle table via SQL only (you cannot assume the presence of any 
+SQL>particular colour) . Subsequent colours will be added directly to this collection via INSERT statements. You are reminded again
+SQL>that you must not make use of any PL/SQL in solving this task.
+SQL>
+SQL>At this stage, the vehicles that have different colours for some of the above-mentioned outer parts are as follows:
+SQL>
+SQL>Vehicle 1:
+SQL>VIN: ZHWEF4ZF2LLA13803
+SQL>Manufacturer Name: Lamborghini
+SQL>Model Name: Huracan EVO
+SQL>Vehicle main colour: Grey
+SQL>Spoiler colour: Black
+SQL>Bumper colour: Grey
+SQL>Grilles colour: Magenta
+SQL>
+SQL>Vehicle 2:
+SQL>VIN: ZHWES4ZF8KLA12259
+SQL>Manufacturer Name: Lamborghini
+SQL>Model Name: Huracan Performante
+SQL>Vehicle main colour: Black
+SQL>Spoiler colour: Yellow
+SQL>Bumper colour: Blue
+SQL>Grilles colour: Black
+SQL>Change the database to meet these requirements. Note: You should only use the necessary DDL and DML statements to achieve these
+SQL>requirements. [12 marks] 
+SQL>*/
+SQL> --For dropping the existing tables and sequence
+SQL> /*
+SQL>DROP TABLE colour CASCADE CONSTRAINTS PURGE;
+SQL>DROP TABLE outer_part CASCADE CONSTRAINTS PURGE;
+SQL>DROP TABLE veh_out_part_colour CASCADE CONSTRAINTS PURGE;
+SQL>DROP TABLE colour_temp CASCADE CONSTRAINTS PURGE;
+SQL>DROP SEQUENCE colour_seq;
+SQL>*/
+SQL> 
+SQL> CREATE TABLE colour_temp
+  2      AS
+  3          SELECT DISTINCT
+  4              veh_maincolor
+  5          FROM
+  6              vehicle;
+
+Table COLOUR_TEMP created.
+
+SQL> 
+SQL> CREATE SEQUENCE colour_seq;
+
+Sequence COLOUR_SEQ created.
+
+SQL> 
+SQL> 
+SQL> CREATE TABLE colour (
+  2          colour_num NUMBER(4), 
+  3          colour_desc VARCHAR2(20) NOT NULL);
+
+Table COLOUR created.
+
+SQL> 
+SQL> 
+SQL> COMMENT ON COLUMN colour.colour_num IS
+  2      'Colour number';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN colour.colour_desc IS
+  2      'Colour description';
+
+Comment created.
+
+SQL> 
+SQL> ALTER TABLE colour ADD CONSTRAINT colour_pk PRIMARY KEY ( colour_num );
+
+Table COLOUR altered.
+
+SQL> 
+SQL> ALTER TABLE colour ADD CONSTRAINT colour_uk UNIQUE ( colour_desc );
+
+Table COLOUR altered.
+
+SQL> 
+SQL> INSERT INTO colour SELECT colour_seq.NEXTVAL, veh_maincolor FROM colour_temp;
+
+14 rows inserted.
+
+SQL> 
+SQL> DROP table colour_temp PURGE;
+
+Table COLOUR_TEMP dropped.
+
+SQL> 
+SQL> 
+SQL> CREATE TABLE outer_part (
+  2      op_code       CHAR(2),
+  3      op_partname   VARCHAR2(20) NOT NULL
+  4  );
+
+Table OUTER_PART created.
+
+SQL> 
+SQL> COMMENT ON COLUMN outer_part.op_code IS
+  2      'Outer part code';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN outer_part.op_partname IS
+  2      'Outer part name';
+
+Comment created.
+
+SQL> 
+SQL> ALTER TABLE outer_part ADD CONSTRAINT op_pk PRIMARY KEY ( op_code );
+
+Table OUTER_PART altered.
+
+SQL> 
+SQL> INSERT INTO outer_part VALUES (
+  2      'SP',
+  3      'Spoiler'
+  4  );
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO outer_part VALUES (
+  2      'BM',
+  3      'Bumper'
+  4  );
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO outer_part VALUES (
+  2      'GR',
+  3      'Grilles'
+  4  );
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> CREATE TABLE veh_out_part_colour (
+  2      veh_vin      CHAR(17),
+  3      op_code      CHAR(2),
+  4      colour_num   NUMBER(4)
+  5  );
+
+Table VEH_OUT_PART_COLOUR created.
+
+SQL> 
+SQL> COMMENT ON COLUMN veh_out_part_colour.veh_vin IS
+  2      'Vehicle VIN';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN veh_out_part_colour.op_code IS
+  2      'Outer part code';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN veh_out_part_colour.colour_num IS
+  2      'Colour number';
+
+Comment created.
+
+SQL> 
+SQL> 
+SQL> --PRIMARY KEYS - ACCEPT ANY OF THE FOLLOWING TWO OPTIONS AS THE QUESTION IS NOT VERY CLEAR
+SQL> ALTER TABLE veh_out_part_colour
+  2      ADD CONSTRAINT v_o_p_c_pk PRIMARY KEY ( veh_vin,
+  3                                              op_code,
+  4                                              colour_num );
+
+Table VEH_OUT_PART_COLOUR altered.
+
+SQL> 
+SQL> /*
+SQL>ALTER TABLE veh_out_part_colour
+SQL>    ADD CONSTRAINT v_o_p_c_pk PRIMARY KEY ( veh_vin,
+SQL>                                            op_code );
+SQL>*/
+SQL> ----PRIMARY KEYS - ACCEPT ANY OF THE ABOVE TWO OPTIONS AS THE QUESTION IS NOT VERY CLEAR
+SQL> 
+SQL> 
+SQL> ALTER TABLE veh_out_part_colour ADD CONSTRAINT v_o_p_c_veh_fk FOREIGN KEY ( veh_vin )
+  2      REFERENCES vehicle;
+
+Table VEH_OUT_PART_COLOUR altered.
+
+SQL> 
+SQL> ALTER TABLE veh_out_part_colour ADD CONSTRAINT v_o_p_c_op_fk FOREIGN KEY ( op_code )
+  2      REFERENCES outer_part;
+
+Table VEH_OUT_PART_COLOUR altered.
+
+SQL> 
+SQL> 
+SQL> ALTER TABLE veh_out_part_colour ADD CONSTRAINT v_o_p_c_col_fk FOREIGN KEY ( colour_num )
+  2      REFERENCES colour;
+
+Table VEH_OUT_PART_COLOUR altered.
+
+SQL> 
+SQL> alter table vehicle add (colour_num number(4));
+
+Table VEHICLE altered.
+
+SQL> 
+SQL> ALTER TABLE vehicle ADD CONSTRAINT colour_num_fk FOREIGN KEY ( colour_num ) REFERENCES colour;
+
+Table VEHICLE altered.
+
+SQL> 
+SQL> update vehicle v set colour_num=(select colour_num from colour where colour_desc=v.veh_maincolor);
+
+211 rows updated.
+
+SQL> 
+SQL> alter table vehicle modify colour_num not null;
+
+Table VEHICLE altered.
+
+SQL> 
+SQL> alter table vehicle drop column veh_maincolor;
+
+Table VEHICLE altered.
+
+SQL> 
+SQL> INSERT INTO veh_out_part_colour VALUES (
+  2      'ZHWEF4ZF2LLA13803',
+  3      (
+  4          SELECT
+  5              op_code
+  6          FROM
+  7              outer_part
+  8          WHERE
+  9              op_partname = 'Spoiler'
+ 10      ),
+ 11      (
+ 12          SELECT
+ 13              colour_num
+ 14          FROM
+ 15              colour
+ 16          WHERE
+ 17              colour_desc = 'Black'
+ 18      )
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO colour VALUES (
+  2      colour_seq.NEXTVAL,
+  3      'Magenta'
+  4  );
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> --No need for INSERT statement for Bumper color as it is the same color as that of this vehicle's body color
+SQL> 
+SQL> INSERT INTO veh_out_part_colour VALUES (
+  2      'ZHWEF4ZF2LLA13803',
+  3      (
+  4          SELECT
+  5              op_code
+  6          FROM
+  7              outer_part
+  8          WHERE
+  9              op_partname = 'Grilles'
+ 10      ),
+ 11      (
+ 12          SELECT
+ 13              colour_num
+ 14          FROM
+ 15              colour
+ 16          WHERE
+ 17              colour_desc = 'Magenta'
+ 18      )
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO veh_out_part_colour VALUES (
+  2      'ZHWES4ZF8KLA12259',
+  3      (
+  4          SELECT
+  5              op_code
+  6          FROM
+  7              outer_part
+  8          WHERE
+  9              op_partname = 'Spoiler'
+ 10      ),
+ 11      (
+ 12          SELECT
+ 13              colour_num
+ 14          FROM
+ 15              colour
+ 16          WHERE
+ 17              colour_desc = 'Yellow'
+ 18      )
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO veh_out_part_colour VALUES (
+  2      'ZHWES4ZF8KLA12259',
+  3      (
+  4          SELECT
+  5              op_code
+  6          FROM
+  7              outer_part
+  8          WHERE
+  9              op_partname = 'Bumper'
+ 10      ),
+ 11      (
+ 12          SELECT
+ 13              colour_num
+ 14          FROM
+ 15              colour
+ 16          WHERE
+ 17              colour_desc = 'Blue'
+ 18      )
+ 19  );
+
+1 row inserted.
+
+SQL> --No need for INSERT statement for Grilles color as it is the same color as that of this vehicle's body color
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> set echo on
+SQL> --============================== END Q3 RUN ======================================---
+SQL> set echo off

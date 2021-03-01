@@ -1,0 +1,549 @@
+SQL> --============================== START Q2 RUN ======================================---
+SQL> ----------------------------- Queries -----------------------------------------------
+
+SQL> /*
+SQL>(i) Show the demerit points and demerit description for all the demerits that either contain the word 'heavy' or Heavy' or start with the 
+SQL>word 'Exceed' in the description. The column headings in your output should be renamed as Demerit Points and Demerit Description. The output must 
+SQL>be sorted by demerit points and where two demerits have the same points sort them by the demerit description. Your output must 
+SQL>have the form shown below.
+SQL>*/
+SQL> SELECT
+  2      dem_points        "Demerit Points",
+  3      dem_description   "Demerit Description"
+  4  FROM
+  5      demerit
+  6  WHERE
+  7      ( dem_description LIKE '%heavy%'
+  8        OR dem_description LIKE '%Heavy%' )
+  9      OR dem_description LIKE 'Exceed%'
+ 10  ORDER BY
+ 11      dem_points,
+ 12      dem_description;
+
+Demerit Points Demerit Description                                                        
+-------------- ---------------------------------------------------------------------------
+             1 Exceed speed limit by less than 10km/h                                     
+             3 Driving a fatigue-regulated heavy vehicle against max work req. - Severe   
+             3 Driving a fatigue-regulated heavy vehicle against min. rest req. - Severe  
+             3 Driving a fatigue-regulated heavy vehicle while impaired by fatigue        
+             3 Exceeding the speed limit by 10 km/h or more but less than 25 km/h         
+             4 Driving a fatigue-regulated Heavy vehicle against max work req. - Critical 
+             4 Driving a fatigue-regulated Heavy vehicle against min. rest req. - Critical
+             4 Exceeding the speed limit by 25 km/h or more                               
+
+8 rows selected. 
+
+SQL> 
+SQL> /*
+SQL>(ii) For all Range Rover and Range Rover Sport models, show the main color, VIN and manufacture year for all the
+SQL>vehicles that were manufactured from 2012 to 2014. The column headings in your output should be renamed as Main Colour, VIN 
+SQL>and Year Manufactured. The output must be sorted by manufacture year in descending form and where more than one vehicle was
+SQL>manufactured in the same year sort them by color. Your output must have the form shown below.
+SQL>*/
+SQL> 
+SQL> SELECT
+  2      veh_maincolor   AS "Main Colour",
+  3      veh_vin         AS "VIN",
+  4      to_char(veh_yrmanuf, 'yyyy') AS "Year Manufactured"
+  5  FROM
+  6      vehicle
+  7  WHERE
+  8      veh_modname IN (
+  9          'Range Rover',
+ 10          'Range Rover Sport'
+ 11      )
+ 12      AND EXTRACT(year from veh_yrmanuf) BETWEEN 2012 AND 2014
+ 13  ORDER BY
+ 14      veh_yrmanuf DESC,
+ 15      veh_maincolor;
+
+Main Colour          VIN               Year
+-------------------- ----------------- ----
+Black                SALWG2VFXEA308415 2014
+White                SALWR2TF0EA352419 2014
+Charcoal             SALMF1D42CA345640 2012
+
+SQL> 
+SQL> /*
+SQL>(iii) Show the driver licence number, fullname (firstname and lastname together), date of bith, full address (street, town and
+SQL>postcode together), suspension start date and suspension end date for all the drivers who have had their licence suspended in
+SQL>the last 30 months. You need SQL to calculate 30 months from the day this query would be executed by the user.
+SQL>
+SQL>The column headings in your output should be renamed as Licence No., Driver Fullname, DOB, Driver Address, Suspended On and 
+SQL>Suspended Till. The output must be sorted by licence number and where there is one licence number suspended more than once sort 
+SQL>them by suspended date in descending format. Your output must have the form shown below. (Your output can clearly be different
+SQL>from the following output).
+SQL>*/
+SQL> 
+SQL> SELECT
+  2      d.lic_no        AS "Licence No.",
+  3      d.lic_fname
+  4      || ' '
+  5      || d.lic_lname AS "Driver Fullname",
+  6      to_char(d.lic_dob, 'dd-Mon-yyyy') AS "DOB",
+  7      d.lic_street
+  8      || ' '
+  9      || d.lic_town
+ 10      || ' '
+ 11      || d.lic_postcode AS "Driver Address",
+ 12      s.sus_date      AS "Suspended On",
+ 13      s.sus_enddate   AS "Suspended Till"
+ 14  FROM
+ 15      driver       d
+ 16      JOIN suspension   s ON s.lic_no = d.lic_no
+ 17  WHERE
+ 18      s.sus_date BETWEEN add_months(current_timestamp, - 30) AND trunc(current_timestamp)
+ 19  ORDER BY
+ 20      d.lic_no,
+ 21      s.sus_date DESC;
+
+Licence No Driver Fullname                                               DOB                  Driver Address                                                               Suspended Suspended
+---------- ------------------------------------------------------------- -------------------- ---------------------------------------------------------------------------- --------- ---------
+100018     Garvey Nocair                                                 20-Oct-1989          9 Anniversary Place Richmond 3121                                            17/JAN/18 17/JUL/18
+
+SQL> 
+SQL> /* ADDED ON 22/MAY
+SQL>(iv) TDS would like to find out if there is any correlation between different months of a year and demerit codes so you have
+SQL>been assigned to generate a report that shows for ALL the demerits, the code, description, total number of offences committed
+SQL>for the demerit code so far in any month (of any year) and then the total of offences committed for the demerit code in each
+SQL>month (of any year). The column headings in your output should be renamed as Demerit Code, Demerit Description, Total Offences
+SQL>(All Months), and then the first three letters of each month (with first letter in uppercase). The output must be sorted by
+SQL>Total Offences (All Months) column in descending format and where there is more than one demerit code with the same total, sort
+SQL>them by demerit code in ascending format. Your output must have the form shown below. Your output can clearly be different from
+SQL>the following output.
+SQL>*/
+SQL> SELECT DISTINCT
+  2      d.dem_code          AS "Demerit Code",
+  3      d.dem_description   "Demerit Description",
+  4      COUNT(o.dem_code) "Total Offences (All Months)",
+  5      (
+  6          SELECT
+  7              COUNT(*)
+  8          FROM
+  9              offence oi
+ 10          WHERE
+ 11              to_char(oi.off_datetime, 'Mon') = 'Jan'
+ 12              AND oi.dem_code = d.dem_code
+ 13      ) AS "Jan",
+ 14      (
+ 15          SELECT
+ 16              COUNT(*)
+ 17          FROM
+ 18              offence oi
+ 19          WHERE
+ 20              to_char(oi.off_datetime, 'Mon') = 'Feb'
+ 21              AND oi.dem_code = d.dem_code
+ 22      ) AS "Feb",
+ 23      (
+ 24          SELECT
+ 25              COUNT(*)
+ 26          FROM
+ 27              offence oi
+ 28          WHERE
+ 29              to_char(oi.off_datetime, 'Mon') = 'Mar'
+ 30              AND oi.dem_code = d.dem_code
+ 31      ) AS "Mar",
+ 32      (
+ 33          SELECT
+ 34              COUNT(*)
+ 35          FROM
+ 36              offence oi
+ 37          WHERE
+ 38              to_char(oi.off_datetime, 'Mon') = 'Apr'
+ 39              AND oi.dem_code = d.dem_code
+ 40      ) AS "Apr",
+ 41      (
+ 42          SELECT
+ 43              COUNT(*)
+ 44          FROM
+ 45              offence oi
+ 46          WHERE
+ 47              to_char(oi.off_datetime, 'Mon') = 'May'
+ 48              AND oi.dem_code = d.dem_code
+ 49      ) AS "May",
+ 50      (
+ 51          SELECT
+ 52              COUNT(*)
+ 53          FROM
+ 54              offence oi
+ 55          WHERE
+ 56              to_char(oi.off_datetime, 'Mon') = 'Jun'
+ 57              AND oi.dem_code = d.dem_code
+ 58      ) AS "Jun",
+ 59      (
+ 60          SELECT
+ 61              COUNT(*)
+ 62          FROM
+ 63              offence oi
+ 64          WHERE
+ 65              to_char(oi.off_datetime, 'Mon') = 'Jul'
+ 66              AND oi.dem_code = d.dem_code
+ 67      ) AS "Jul",
+ 68      (
+ 69          SELECT
+ 70              COUNT(*)
+ 71          FROM
+ 72              offence oi
+ 73          WHERE
+ 74              to_char(oi.off_datetime, 'Mon') = 'Aug'
+ 75              AND oi.dem_code = d.dem_code
+ 76      ) AS "Aug",
+ 77      (
+ 78          SELECT
+ 79              COUNT(*)
+ 80          FROM
+ 81              offence oi
+ 82          WHERE
+ 83              to_char(oi.off_datetime, 'Mon') = 'Sep'
+ 84              AND oi.dem_code = d.dem_code
+ 85      ) AS "Sep",
+ 86      (
+ 87          SELECT
+ 88              COUNT(*)
+ 89          FROM
+ 90              offence oi
+ 91          WHERE
+ 92              to_char(oi.off_datetime, 'Mon') = 'Oct'
+ 93              AND oi.dem_code = d.dem_code
+ 94      ) AS "Oct",
+ 95      (
+ 96          SELECT
+ 97              COUNT(*)
+ 98          FROM
+ 99              offence oi
+100          WHERE
+101              to_char(oi.off_datetime, 'Mon') = 'Nov'
+102              AND oi.dem_code = d.dem_code
+103      ) AS "Nov",
+104      (
+105          SELECT
+106              COUNT(*)
+107          FROM
+108              offence oi
+109          WHERE
+110              to_char(oi.off_datetime, 'Mon') = 'Dec'
+111              AND oi.dem_code = d.dem_code
+112      ) AS "Dec"
+113  FROM
+114      demerit   d
+115      LEFT JOIN offence   o ON o.dem_code = d.dem_code
+116  GROUP BY
+117      d.dem_code,
+118      d.dem_description
+119  ORDER BY
+120      "Total Offences (All Months)" DESC,
+121      d.dem_code;
+
+Demerit Code Demerit Description                                                         Total Offences (All Months)        Jan        Feb        Mar        Apr        May        Jun        Jul        Aug        Sep        Oct        Nov        Dec
+------------ --------------------------------------------------------------------------- --------------------------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+         100 Blood alcohol charge                                                                                 12          3          1          0          3          0          0          2          1          1          0          0          1
+         101 Level crossing offence                                                                                5          2          2          1          0          0          0          0          0          0          0          0          0
+         131 Following too closely                                                                                 3          1          0          2          0          0          0          0          0          0          0          0          0
+         113 Risk colliding with exiting, boarding or waiting tram passengers                                      2          0          0          0          0          0          1          0          0          1          0          0          0
+         127 Exceed speed limit by less than 10km/h                                                                2          1          0          0          0          0          0          1          0          0          0          0          0
+         128 Driving contrary to a minor defect notice                                                             2          0          0          0          0          1          1          0          0          0          0          0          0
+         103 Using a visual display unit or television illegally while driving                                     1          0          0          0          0          0          0          0          0          0          1          0          0
+         124 Turn or stop without signalling                                                                       1          0          0          1          0          0          0          0          0          0          0          0          0
+         125 Turn improperly                                                                                       1          0          0          0          1          0          0          0          0          0          0          0          0
+          99 Exceeding the speed limit by 25 km/h or more                                                          0          0          0          0          0          0          0          0          0          0          0          0          0
+         102 Using a mobile phone illegally while driving                                                          0          0          0          0          0          0          0          0          0          0          0          0          0
+         104 Driving a fatigue-regulated Heavy vehicle against max work req. - Critical                            0          0          0          0          0          0          0          0          0          0          0          0          0
+         105 Driving a fatigue-regulated Heavy vehicle against min. rest req. - Critical                           0          0          0          0          0          0          0          0          0          0          0          0          0
+         106 Exceeding the speed limit by 10 km/h or more but less than 25 km/h                                    0          0          0          0          0          0          0          0          0          0          0          0          0
+         107 Disobeying traffic lights, signs or police or authorised person                                       0          0          0          0          0          0          0          0          0          0          0          0          0
+         108 Failing to give way, or stop, or remain stopped                                                       0          0          0          0          0          0          0          0          0          0          0          0          0
+         109 Driving without wearing an approved helmet                                                            0          0          0          0          0          0          0          0          0          0          0          0          0
+         110 Driving without properly fastened seat belt                                                           0          0          0          0          0          0          0          0          0          0          0          0          0
+         111 Driving with an unrestrained passenger                                                                0          0          0          0          0          0          0          0          0          0          0          0          0
+         112 Driving on the wrong side of double lines or divided hwy or painted island                            0          0          0          0          0          0          0          0          0          0          0          0          0
+         114 Driving a fatigue-regulated heavy vehicle while impaired by fatigue                                   0          0          0          0          0          0          0          0          0          0          0          0          0
+         115 Driving a fatigue-regulated heavy vehicle against max work req. - Severe                              0          0          0          0          0          0          0          0          0          0          0          0          0
+         116 Driving a fatigue-regulated heavy vehicle against min. rest req. - Severe                             0          0          0          0          0          0          0          0          0          0          0          0          0
+         117 Driving contrary to a major defect notice                                                             0          0          0          0          0          0          0          0          0          0          0          0          0
+         118 Careless driving                                                                                      0          0          0          0          0          0          0          0          0          0          0          0          0
+         119 Driving with an obscured or improperly displayed number plate                                         0          0          0          0          0          0          0          0          0          0          0          0          0
+         120 Failure to display P plate                                                                            0          0          0          0          0          0          0          0          0          0          0          0          0
+         121 Probationary driver who drives a probationary prohibited vehicle on a road                            0          0          0          0          0          0          0          0          0          0          0          0          0
+         122 Driving the wrong way on a one way service road                                                       0          0          0          0          0          0          0          0          0          0          0          0          0
+         123 Improper overtaking or passing                                                                        0          0          0          0          0          0          0          0          0          0          0          0          0
+         126 Fail to keep left                                                                                     0          0          0          0          0          0          0          0          0          0          0          0          0
+         129 Fail to dip headlights                                                                                0          0          0          0          0          0          0          0          0          0          0          0          0
+         130 Driving at night or in bad weather without headlights/tail lights on                                  0          0          0          0          0          0          0          0          0          0          0          0          0
+
+33 rows selected. 
+
+SQL> 
+SQL> /*
+SQL>(v) Find out which manufacturer's vehicles are involved in the highest number of offences which incur 2 or more demerit points.
+SQL>Show the manufacturer name and the total number of offences that the manufacturer's vehicles are involved in. The column
+SQL>headings in your output should be renamed as Manufacturer Name and Total No. of Offences. The output must be sorted by Total No.
+SQL>of Offences column in descending format and where there is more than one manufacturer with the same total, sort them by
+SQL>manufacturer name in ascending format.. Your output can clearly be different from the following output.
+SQL>*/
+SQL> SELECT
+  2      v.veh_manufname AS "Manufacturer Name",
+  3      COUNT(o.off_no) AS "Total No. of Offences"
+  4  FROM
+  5      vehicle   v
+  6      JOIN offence   o ON o.veh_vin = v.veh_vin
+  7      JOIN demerit   d ON d.dem_code = o.dem_code
+  8  WHERE
+  9      d.dem_points >= 2
+ 10  GROUP BY
+ 11      v.veh_manufname
+ 12  HAVING
+ 13      COUNT(o.off_no) = (
+ 14          SELECT
+ 15              MAX(COUNT(o.off_no))
+ 16          FROM
+ 17              vehicle   v
+ 18              JOIN offence   o ON o.veh_vin = v.veh_vin
+ 19              JOIN demerit   d ON d.dem_code = o.dem_code
+ 20          WHERE
+ 21              d.dem_points >= 2
+ 22          GROUP BY
+ 23              v.veh_manufname
+ 24      )
+ 25  ORDER BY
+ 26      "Total No. of Offences" DESC,
+ 27      v.veh_manufname;
+
+Manufacturer Name              Total No. of Offences
+------------------------------ ---------------------
+Nissan                                             7
+
+SQL> 
+SQL> 
+SQL> /*
+SQL>(vi) Find out the drivers who have been booked more than once for the same offence by an officer with the last name as that of
+SQL>their last name. Show the driver licence number, driver fullname (firstname and lastname together, officer number, officer
+SQL>fullname (firstname and lastname together). The column headings in your output should be renamed as Licence No., Driver Name,
+SQL>Officer ID, Officer Name. The output must be sorted by driver licence number column in ascending format.
+SQL>*/
+SQL> SELECT
+  2      dvr.lic_no       AS "Licence No.",
+  3      dvr.lic_fname
+  4      || ' '
+  5      || dvr.lic_lname AS "Driver Name",
+  6      ofr.officer_id   AS "Officer ID",
+  7      ofr.officer_fname
+  8      || ' '
+  9      || ofr.officer_lname AS "Officer Name"
+ 10  FROM
+ 11      offence   ofe
+ 12      JOIN officer   ofr ON ofe.officer_id = ofr.officer_id
+ 13      JOIN driver    dvr ON dvr.lic_no = ofe.lic_no
+ 14      JOIN demerit   dem ON dem.dem_code = ofe.dem_code
+ 15  WHERE
+ 16      ofr.officer_lname = dvr.lic_lname
+ 17  GROUP BY
+ 18      dvr.lic_no,
+ 19      dvr.lic_fname
+ 20      || ' '
+ 21      || dvr.lic_lname,
+ 22      ofr.officer_id,
+ 23      ofr.officer_fname
+ 24      || ' '
+ 25      || ofr.officer_lname,
+ 26      dem.dem_code
+ 27  HAVING
+ 28      COUNT(*) > 1
+ 29  ORDER BY
+ 30      dvr.lic_no;
+
+Licence No Driver Name                                                   Officer ID Officer Name                                                 
+---------- ------------------------------------------------------------- ---------- -------------------------------------------------------------
+100011     Debbie Hedling                                                  10000011 Dolley Hedling                                               
+
+SQL> 
+SQL> /*
+SQL>(vii) For each demerit code for which an offence has been recorded, find out the driver/s who has/have been booked the most 
+SQL>number of times.
+SQL>Show the demerit code, demerit description, driver licence number, driver fullname (firstname and lastname together) and the 
+SQL>total number of times the driver has been booked in the output.
+SQL>The column headings in your output should be renamed as Demerit Code, Demerit Description, Licence No., Driver Fullname and 
+SQL>Total Times Booked. The output must be sorted by demerit code and where for one demerit there is more than one driver
+SQL>booked the most number of times sort them by licence number. Your output must have the form shown below. (Your output can 
+SQL>clearly be different from the following output).
+SQL>*/
+SQL> 
+SQL> SELECT
+  2      o1.dem_code          AS "Demerit Code",
+  3      dm.dem_description   AS "Demerit Description",
+  4      o1.lic_no            AS "Licence No.",
+  5      dv.lic_fname
+  6      || ' '
+  7      || dv.lic_lname AS "Driver Fullname",
+  8      COUNT(*) AS "Total Times Booked"
+  9  FROM
+ 10      offence   o1
+ 11      JOIN demerit   dm ON o1.dem_code = dm.dem_code
+ 12      JOIN driver    dv ON o1.lic_no = dv.lic_no
+ 13  GROUP BY
+ 14      o1.dem_code,
+ 15      dm.dem_description,
+ 16      o1.lic_no,
+ 17      dv.lic_fname,
+ 18      dv.lic_lname
+ 19  HAVING
+ 20      COUNT(*) = (
+ 21          SELECT
+ 22              MAX(COUNT(*))
+ 23          FROM
+ 24              offence o2
+ 25          WHERE
+ 26              o1.dem_code = o2.dem_code
+ 27          GROUP BY
+ 28              o2.lic_no
+ 29      )
+ 30  ORDER BY
+ 31      o1.dem_code,
+ 32      o1.lic_no;
+
+Demerit Code Demerit Description                                                         Licence No Driver Fullname                                               Total Times Booked
+------------ --------------------------------------------------------------------------- ---------- ------------------------------------------------------------- ------------------
+         100 Blood alcohol charge                                                        100011     Debbie Hedling                                                                 4
+         100 Blood alcohol charge                                                        100018     Garvey Nocair                                                                  4
+         101 Level crossing offence                                                      100018     Garvey Nocair                                                                  2
+         101 Level crossing offence                                                      100100     Daniel Palphramand                                                             2
+         103 Using a visual display unit or television illegally while driving           100081     Mireielle Tufts                                                                1
+         113 Risk colliding with exiting, boarding or waiting tram passengers            100001     Dalt Alfonsini                                                                 1
+         113 Risk colliding with exiting, boarding or waiting tram passengers            100074     Boyce Ownsworth                                                                1
+         124 Turn or stop without signalling                                             100034     Dolphie Badriver                                                               1
+         125 Turn improperly                                                             100061     Velvet Krysiak                                                                 1
+         127 Exceed speed limit by less than 10km/h                                      100060     Annnora Golston                                                                1
+         127 Exceed speed limit by less than 10km/h                                      100082     Abeu Hedling                                                                   1
+         128 Driving contrary to a minor defect notice                                   100044     Luisa Dunnet                                                                   1
+         128 Driving contrary to a minor defect notice                                   100064     Wilmette Goldsberry                                                            1
+         131 Following too closely                                                       100034     Dolphie Badriver                                                               2
+
+14 rows selected. 
+
+SQL> 
+SQL> 
+SQL> /*(viii) For each region, show the number of vehicles manufactured in the region and the percentage of vehicles manufactured in the
+SQL>region. The last row of the output shows the totals - second column of which shows the total number of vehicles manufactured in
+SQL>all regions (which is the total of all the individual totals in this column) and the third column of which shows the total
+SQL>percentage of vehicles manufactured in all the regions (which is the total of all the individual percentages in this column).
+SQL>
+SQL>The first character of the VIN represents the region where the vehicle was manufactured. In your SQL, you need to determine the
+SQL>region in which the vehicle was manufactured using the following table.
+SQL>
+SQL>First Character of VIN: Region
+SQL>From A to C:            Africa
+SQL>From J to R:            Asia
+SQL>From S to Z:            Europe
+SQL>From 1 to 5:            North America
+SQL>From 6 to 7:            Oceania
+SQL>From 8 to 9:            South America
+SQL>Anything else:          Unknown
+SQL>
+SQL>The column headings in your output should be renamed as Region, Total Vehicles Manufactured and Percentage of Vehicles
+SQL>Manufactured.
+SQL>
+SQL>The output must be sorted by Total Vehicles Manufactured and where there is more than one region with the same total, sort them
+SQL>by region. Your output must have the form shown below.
+SQL>*/
+SQL> SELECT
+  2      CASE
+  3          WHEN substr(veh_vin, 1, 1) BETWEEN 'A' AND 'C' THEN
+  4              'Africa'
+  5          WHEN substr(veh_vin, 1, 1) BETWEEN 'J' AND 'R' THEN
+  6              'Asia'
+  7          WHEN substr(veh_vin, 1, 1) BETWEEN 'S' AND 'Z' THEN
+  8              'Europe'
+  9          WHEN substr(veh_vin, 1, 1) BETWEEN 1 AND 5   THEN
+ 10              'North America'
+ 11          WHEN substr(veh_vin, 1, 1) BETWEEN 6 AND 7   THEN
+ 12              'Oceania'
+ 13          WHEN substr(veh_vin, 1, 1) BETWEEN 8 AND 9   THEN
+ 14              'South America'
+ 15          ELSE
+ 16              'Unknown'
+ 17      END AS "Region",
+ 18      COUNT(*) AS "Total Vehicles Manufactured",
+ 19      lpad(to_char(round((COUNT(*) /(
+ 20          SELECT
+ 21              COUNT(*)
+ 22          FROM
+ 23              vehicle
+ 24      )) * 100, 2), '990.99'), 27)
+ 25      || '%' AS "Percentage of Vehicles Manufactured"
+ 26  FROM
+ 27      vehicle
+ 28  GROUP BY
+ 29      CASE
+ 30          WHEN substr(veh_vin, 1, 1) BETWEEN 'A' AND 'C' THEN
+ 31              'Africa'
+ 32          WHEN substr(veh_vin, 1, 1) BETWEEN 'J' AND 'R' THEN
+ 33              'Asia'
+ 34          WHEN substr(veh_vin, 1, 1) BETWEEN 'S' AND 'Z' THEN
+ 35              'Europe'
+ 36          WHEN substr(veh_vin, 1, 1) BETWEEN 1 AND 5   THEN
+ 37              'North America'
+ 38          WHEN substr(veh_vin, 1, 1) BETWEEN 6 AND 7   THEN
+ 39              'Oceania'
+ 40          WHEN substr(veh_vin, 1, 1) BETWEEN 8 AND 9   THEN
+ 41              'South America'
+ 42          ELSE
+ 43              'Unknown'
+ 44      END
+ 45  UNION
+ 46  SELECT
+ 47      lpad('TOTAL', 13),
+ 48      (
+ 49          SELECT
+ 50              COUNT(*)
+ 51          FROM
+ 52              vehicle
+ 53      ),
+ 54      (
+ 55          SELECT
+ 56              lpad(to_char(SUM(round(COUNT(*) /(
+ 57                  SELECT
+ 58                      COUNT(*)
+ 59                  FROM
+ 60                      vehicle
+ 61              ) * 100, 2))), 27)
+ 62              || '%'
+ 63          FROM
+ 64              vehicle
+ 65          GROUP BY
+ 66              CASE
+ 67                  WHEN substr(veh_vin, 1, 1) BETWEEN 'A' AND 'C' THEN
+ 68                      'Africa'
+ 69                  WHEN substr(veh_vin, 1, 1) BETWEEN 'J' AND 'R' THEN
+ 70                      'Asia'
+ 71                  WHEN substr(veh_vin, 1, 1) BETWEEN 'S' AND 'Z' THEN
+ 72                      'Europe'
+ 73                  WHEN substr(veh_vin, 1, 1) BETWEEN 1 AND 5   THEN
+ 74                      'North America'
+ 75                  WHEN substr(veh_vin, 1, 1) BETWEEN 6 AND 7   THEN
+ 76                      'Oceania'
+ 77                  WHEN substr(veh_vin, 1, 1) BETWEEN 8 AND 9   THEN
+ 78                      'South America'
+ 79                  ELSE
+ 80                      'Unknown'
+ 81              END
+ 82      )
+ 83  FROM
+ 84      dual
+ 85  ORDER BY
+ 86      "Total Vehicles Manufactured",
+ 87      "Region";
+
+Region        Total Vehicles Manufactured Percentage of Vehicles Manuf
+------------- --------------------------- ----------------------------
+Oceania                                 1                        0.47%
+South America                           1                        0.47%
+North America                          54                       25.59%
+Asia                                   66                       31.28%
+Europe                                 89                       42.18%
+        TOTAL                         211                       99.99%
+
+6 rows selected. 
+
+SQL> 
+SQL> set echo on
+SQL> --============================== END Q2 RUN ======================================---
+SQL> set echo off

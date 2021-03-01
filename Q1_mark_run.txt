@@ -1,0 +1,1003 @@
+SQL> ----------------------------Insert data -----------------------------------------
+SQL> 
+SQL> SET SERVEROUTPUT ON;
+SQL> 
+SQL> /*Q1. Data Manipulation (20 marks):*/
+SQL> /*
+SQL>1a) Load selected tables with your own additional test data using the supplied Q1a-tds-insert.sql script file, and the SQL
+SQL>commands which will insert, as a minimum, the following sample data - 
+SQL>20 OFFENCES
+SQL>3 SUSPENSIONS
+SQL>Please note, these are the minimum number of entries you must insert; you are encouraged to insert more to provide a richer data
+SQL>set to draw from. 
+SQL>For this task only, data that you add in the database should follow the rules mentioned below:
+SQL>The primary key values for this data should be hardcoded values (i.e., not make use of sequences) and must consist of values
+SQL>below 100.
+SQL>Offences that you add must involve at least 12 different drivers. 
+SQL>You must not add any offences for the following driver:
+SQL>Lion Lawless of 72 Aberg Avenue Richmond South 3121 (Licence no.: 100389)
+SQL>Dates used must be chosen between the 1st January 2016 and 30th June 2019. For each year from 2016 to 30th June 2019, you should
+SQL>add at least 4 offences.
+SQL>The suspensions you add in the database should not be in just one year, e.g., you should not add all the suspensions in 2018.
+SQL>The suspensions you add in the database should not belong to just one driver, e.g., you should not add all the suspensions for
+SQL>driver with licence number 100100.
+SQL>A suspended driver cannot incur extra offences under this system while suspended. If a driver commits a driving offence while
+SQL>suspended their vehicle is impounded and they are sent before the court (this means you must not add an offence to a suspended
+SQL>driver until their suspension period has expired).
+SQL>The supplied trigger shows the current total demerit points for a driver when you insert a new offence. You will need to run
+SQL>your inserts one by one in date order, taking appropriate action if the drivers accumulated points pass the 12 demerit point
+SQL>threshold. Each such entry should be treated as a separate transaction. An offence and any appropriate action that you may have
+SQL>to take for this task must be managed as a transaction. 
+SQL>*/
+SQL> INSERT INTO offence VALUES (
+  2      1,
+  3      TO_DATE('12-Jan-2016 4:00 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Railway Crossing, Wallan, 3756',
+  5      101,
+  6      10000015,
+  7      '100100',
+  8      'ZA9DU01B01LA12597'
+  9  );
+Driver 100100 has never been suspended.
+Excluding this offence, driver 100100 has incurred 0 demerit points. These points are calculated from 12/JAN/13 to 12/JAN/16. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 4.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      2,
+  3      TO_DATE('1-Feb-2016 6:56 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Karma Place, Malvern East, 3145',
+  5      100,
+  6      10000001,
+  7      '100018',
+  8      '5UXZV4C52BL739734'
+  9  );
+Driver 100018 has never been suspended.
+Excluding this offence, driver 100018 has incurred 0 demerit points. These points are calculated from 01/FEB/13 to 01/FEB/16. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 4.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      3,
+  3      TO_DATE('15-Mar-2016 4:10 AM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Lunder Junction, Clayton South, 3169',
+  5      101,
+  6      10000021,
+  7      '100018',
+  8      '5UXZV4C52BL739734'
+  9  );
+Driver 100018 has never been suspended.
+Excluding this offence, driver 100018 has incurred 4 demerit points. These points are calculated from 15/MAR/13 to 15/MAR/16. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 8.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      4,
+  3      TO_DATE('17-Mar-2016 2:43 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Debra Terrace, South Yarra, 3141',
+  5      131,
+  6      10000010,
+  7      '100034',
+  8      'JN8AZ08W77W77W642'
+  9  );
+Driver 100034 has never been suspended.
+Excluding this offence, driver 100034 has incurred 0 demerit points. These points are calculated from 17/MAR/13 to 17/MAR/16. Demerit point/s incurred for this offence is/are 1.
+Total points NOW are: 1.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      5,
+  3      TO_DATE('18-Apr-2016 11:09 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Bartelt Rd, Clifton Hill, 3068',
+  5      100,
+  6      10000011,
+  7      '100011',
+  8      '1N6AD0CW4AC543602'
+  9  );
+Driver 100011 has never been suspended.
+Excluding this offence, driver 100011 has incurred 0 demerit points. These points are calculated from 18/APR/13 to 18/APR/16. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 4.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      6,
+  3      TO_DATE('8-Jul-2016 5:55 AM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Gateway Point, Malvern East, 3145',
+  5      100,
+  6      10000007,
+  7      '100018',
+  8      '2T1FF22P01C442928'
+  9  );
+Driver 100018 has never been suspended.
+Excluding this offence, driver 100018 has incurred 8 demerit points. These points are calculated from 08/JUL/13 to 08/JUL/16. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 12.
+
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO suspension VALUES (
+  2      '100018',
+  3      TO_DATE('8-Jul-2016', 'DD-MON-YYYY'),
+  4      TO_DATE('8-Jan-2017', 'DD-MON-YYYY')
+  5  );
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      7,
+  3      TO_DATE('8-Aug-2016 11:09 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Connaught Place, Leongatha, 3953',
+  5      100,
+  6      10000011,
+  7      '100011',
+  8      '1N6AD0CW4AC543602'
+  9  );
+Driver 100011 has never been suspended.
+Excluding this offence, driver 100011 has incurred 4 demerit points. These points are calculated from 08/AUG/13 to 08/AUG/16. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 8.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      8,
+  3      TO_DATE('22-Sep-2016 1:09 AM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Tennessee Park, Richmond, 3121',
+  5      100,
+  6      10000014,
+  7      '100011',
+  8      '1N6AD0CW4AC543602'
+  9  );
+Driver 100011 has never been suspended.
+Excluding this offence, driver 100011 has incurred 8 demerit points. These points are calculated from 22/SEP/13 to 22/SEP/16. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 12.
+
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO suspension VALUES (
+  2      '100011',
+  3      TO_DATE('22-Sep-2016', 'DD-MON-YYYY'),
+  4      TO_DATE('22-Mar-2017', 'DD-MON-YYYY')
+  5  );
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      9,
+  3      TO_DATE('10-Jan-2017 12:45 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Bandra Pass, Clifton Hill, 3068',
+  5      131,
+  6      10000011,
+  7      '100034',
+  8      'JN8AZ08W77W77W642'
+  9  );
+Driver 100034 has never been suspended.
+Excluding this offence, driver 100034 has incurred 1 demerit points. These points are calculated from 10/JAN/14 to 10/JAN/17. Demerit point/s incurred for this offence is/are 1.
+Total points NOW are: 2.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      10,
+  3      TO_DATE('10-Jan-2017 2:39 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Princes Hwy and Springvale Rd intersect, Springvale, 3171',
+  5      100,
+  6      10000011,
+  7      '100003',
+  8      'YV2E4C314WB197869'
+  9  );
+Driver 100003 has never been suspended.
+Excluding this offence, driver 100003 has incurred 0 demerit points. These points are calculated from 10/JAN/14 to 10/JAN/17. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 4.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      11,
+  3      TO_DATE('10-Jan-2017 2:19 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Railway Crossing, Wallan, 3756',
+  5      100,
+  6      10000016,
+  7      '100018',
+  8      '5UXZV4C52BL739734'
+  9  );
+Driver 100018 has been suspended before.
+Driver 100018 has been suspended in the last 3 years. Points for this driver are calculated from 08/JAN/17
+Excluding this offence, driver 100018 has incurred 0 demerit points. These points are calculated from 08/JAN/17 to 10/JAN/17. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 4.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      12,
+  3      TO_DATE('10-Jan-2017 2:19 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Railway Crossing, Wallan, 3756',
+  5      101,
+  6      10000016,
+  7      '100018',
+  8      '5UXZV4C52BL739734'
+  9  );
+Driver 100018 has been suspended before.
+Driver 100018 has been suspended in the last 3 years. Points for this driver are calculated from 08/JAN/17
+Excluding this offence, driver 100018 has incurred 4 demerit points. These points are calculated from 08/JAN/17 to 10/JAN/17. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 8.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      13,
+  3      TO_DATE('8-Mar-2017 1:12 AM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Messerschmidt Drive, Melbourne, 3000',
+  5      124,
+  6      10000021,
+  7      '100034',
+  8      'JN8AZ08W77W77W642'
+  9  );
+Driver 100034 has never been suspended.
+Excluding this offence, driver 100034 has incurred 2 demerit points. These points are calculated from 08/MAR/14 to 08/MAR/17. Demerit point/s incurred for this offence is/are 2.
+Total points NOW are: 4.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      14,
+  3      TO_DATE('28-Mar-2017 12:18 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Grasskamp Parkway, Lysterfield, 3156',
+  5      131,
+  6      10000012,
+  7      '100073',
+  8      '2T1FF22P01C442928'
+  9  );
+Driver 100073 has never been suspended.
+Excluding this offence, driver 100073 has incurred 0 demerit points. These points are calculated from 28/MAR/14 to 28/MAR/17. Demerit point/s incurred for this offence is/are 1.
+Total points NOW are: 1.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      15,
+  3      TO_DATE('1-Apr-2017 6:11 AM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Debra Terrace, South Yarra, 3141',
+  5      100,
+  6      10000013,
+  7      '100011',
+  8      '1N6AD0CW4AC543602'
+  9  );
+Driver 100011 has been suspended before.
+Driver 100011 has been suspended in the last 3 years. Points for this driver are calculated from 22/MAR/17
+Excluding this offence, driver 100011 has incurred 0 demerit points. These points are calculated from 22/MAR/17 to 01/APR/17. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 4.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      16,
+  3      TO_DATE('8-Sep-2017 5:01 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      '7th Avenue, Melbourne, 3000',
+  5      113,
+  6      10000011,
+  7      '100074',
+  8      'JM1TA2213Y1616325'
+  9  );
+Driver 100074 has never been suspended.
+Excluding this offence, driver 100074 has incurred 0 demerit points. These points are calculated from 08/SEP/14 to 08/SEP/17. Demerit point/s incurred for this offence is/are 3.
+Total points NOW are: 3.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      17,
+  3      TO_DATE('17-Jan-2018 11:10 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Tennessee Park, Richmond, 3121',
+  5      100,
+  6      10000011,
+  7      '100018',
+  8      '2T1FF22P01C442928'
+  9  );
+Driver 100018 has been suspended before.
+Driver 100018 has been suspended in the last 3 years. Points for this driver are calculated from 08/JAN/17
+Excluding this offence, driver 100018 has incurred 8 demerit points. These points are calculated from 08/JAN/17 to 17/JAN/18. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 12.
+
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO suspension VALUES (
+  2      '100018',
+  3      TO_DATE('17-Jan-2018', 'DD-MON-YYYY'),
+  4      TO_DATE('17-Jul-2018', 'DD-MON-YYYY')
+  5  );
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      18,
+  3      TO_DATE('12-Feb-2018 6:10 AM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Railway Crossing, Wallan, 3756',
+  5      101,
+  6      10000011,
+  7      '100100',
+  8      'ZA9DU01B01LA12597'
+  9  );
+Driver 100100 has never been suspended.
+Excluding this offence, driver 100100 has incurred 4 demerit points. These points are calculated from 12/FEB/15 to 12/FEB/18. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 8.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      19,
+  3      TO_DATE('15-Apr-2018 7:19 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Lunder Junction, Clayton South, 3169',
+  5      100,
+  6      10000014,
+  7      '100068',
+  8      'JT2ST87F2N0122335'
+  9  );
+Driver 100068 has never been suspended.
+Excluding this offence, driver 100068 has incurred 0 demerit points. These points are calculated from 15/APR/15 to 15/APR/18. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 4.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      20,
+  3      TO_DATE('25-Jul-2018 8:29 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Killdeer Point, Belgrave Heights, 3160',
+  5      127,
+  6      10000019,
+  7      '100060',
+  8      'SALTK12471A294286'
+  9  );
+Driver 100060 has never been suspended.
+Excluding this offence, driver 100060 has incurred 0 demerit points. These points are calculated from 25/JUL/15 to 25/JUL/18. Demerit point/s incurred for this offence is/are 1.
+Total points NOW are: 1.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      21,
+  3      TO_DATE('29-Jul-2018 10:20 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Rusk Center, Pakenham Upper, 3810',
+  5      100,
+  6      10000011,
+  7      '100034',
+  8      'JN8AZ08W77W77W642'
+  9  );
+Driver 100034 has never been suspended.
+Excluding this offence, driver 100034 has incurred 4 demerit points. These points are calculated from 29/JUL/15 to 29/JUL/18. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 8.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      22,
+  3      TO_DATE('10-Oct-2018 9:20 AM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Buena Vista Pass, Leongatha, 3953',
+  5      103,
+  6      10000015,
+  7      '100081',
+  8      '5UXZW0C50C0B88196'
+  9  );
+Driver 100081 has never been suspended.
+Excluding this offence, driver 100081 has incurred 0 demerit points. These points are calculated from 10/OCT/15 to 10/OCT/18. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 4.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      23,
+  3      TO_DATE('20-Dec-2018 6:20 AM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Kings Center, Attwood, 3049',
+  5      100,
+  6      10000007,
+  7      '100003',
+  8      'YV2E4C314WB197869'
+  9  );
+Driver 100003 has never been suspended.
+Excluding this offence, driver 100003 has incurred 4 demerit points. These points are calculated from 20/DEC/15 to 20/DEC/18. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 8.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      24,
+  3      TO_DATE('19-Jan-2019 2:34 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Valley Edge Plaza, Clayton, 3168',
+  5      127,
+  6      10000011,
+  7      '100082',
+  8      '5YJSA1S1XFFP78690'
+  9  );
+Driver 100082 has never been suspended.
+Excluding this offence, driver 100082 has incurred 0 demerit points. These points are calculated from 19/JAN/16 to 19/JAN/19. Demerit point/s incurred for this offence is/are 1.
+Total points NOW are: 1.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      25,
+  3      TO_DATE('21-Feb-2019 10:32 AM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Glacier Hill Pass, Melbourne, 3000',
+  5      101,
+  6      10000010,
+  7      '100011',
+  8      '1N6AD0CW4AC543602'
+  9  );
+Driver 100011 has been suspended before.
+Driver 100011 has been suspended in the last 3 years. Points for this driver are calculated from 22/MAR/17
+Excluding this offence, driver 100011 has incurred 4 demerit points. These points are calculated from 22/MAR/17 to 21/FEB/19. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 8.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      26,
+  3      TO_DATE('29-Apr-2019 1:14 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Grasskamp Parkway, Lysterfield, 3156',
+  5      125,
+  6      10000016,
+  7      '100061',
+  8      '4V5KC9GF38N491144'
+  9  );
+Driver 100061 has never been suspended.
+Excluding this offence, driver 100061 has incurred 0 demerit points. These points are calculated from 29/APR/16 to 29/APR/19. Demerit point/s incurred for this offence is/are 2.
+Total points NOW are: 2.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      27,
+  3      TO_DATE('5-May-2019 4:04 AM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Bandra Pass, Clifton Hill, 3068',
+  5      128,
+  6      10000013,
+  7      '100064',
+  8      '2T1FF22P01C442928'
+  9  );
+Driver 100064 has never been suspended.
+Excluding this offence, driver 100064 has incurred 0 demerit points. These points are calculated from 05/MAY/16 to 05/MAY/19. Demerit point/s incurred for this offence is/are 1.
+Total points NOW are: 1.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      28,
+  3      TO_DATE('1-Jun-2019 11:33 AM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Messerschmidt Drive, Melbourne, 3000',
+  5      113,
+  6      10000014,
+  7      '100001',
+  8      'JA3BF46D9GZ058377'
+  9  );
+Driver 100001 has never been suspended.
+Excluding this offence, driver 100001 has incurred 0 demerit points. These points are calculated from 01/JUN/16 to 01/JUN/19. Demerit point/s incurred for this offence is/are 3.
+Total points NOW are: 3.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      29,
+  3      TO_DATE('12-Jun-2019 2:30 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Bartelt Rd, Clifton Hill, 3068',
+  5      128,
+  6      10000019,
+  7      '100044',
+  8      'ZA9DU01B01LA12597'
+  9  );
+Driver 100044 has never been suspended.
+Excluding this offence, driver 100044 has incurred 0 demerit points. These points are calculated from 12/JUN/16 to 12/JUN/19. Demerit point/s incurred for this offence is/are 1.
+Total points NOW are: 1.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> -- Rows added
+SQL> set echo off
+
+Table Loaded           COUNT(*)
+-------------------- ----------
+1. OFFENCE Rows:             29
+2. SUSPENSION Rows:           3
+
+SQL> -- Check offences 
+SQL> -----------------
+SQL> set echo off
+
+    OFF_NO OFF_DATE_TIME                 OFF_LOCATION                                                                                           DEM_CODE OFFICER_ID LIC_NO     VEH_VIN          
+---------- ----------------------------- ---------------------------------------------------------------------------------------------------- ---------- ---------- ---------- -----------------
+         1 12 Jan 2016 16:00:00          Railway Crossing, Wallan, 3756                                                                              101   10000015 100100     ZA9DU01B01LA12597
+         2 01 Feb 2016 18:56:00          Karma Place, Malvern East, 3145                                                                             100   10000001 100018     5UXZV4C52BL739734
+         3 15 Mar 2016 04:10:00          Lunder Junction, Clayton South, 3169                                                                        101   10000021 100018     5UXZV4C52BL739734
+         4 17 Mar 2016 14:43:00          Debra Terrace, South Yarra, 3141                                                                            131   10000010 100034     JN8AZ08W77W77W642
+         5 18 Apr 2016 23:09:00          Bartelt Rd, Clifton Hill, 3068                                                                              100   10000011 100011     1N6AD0CW4AC543602
+         6 08 Jul 2016 05:55:00          Gateway Point, Malvern East, 3145                                                                           100   10000007 100018     2T1FF22P01C442928
+         7 08 Aug 2016 23:09:00          Connaught Place, Leongatha, 3953                                                                            100   10000011 100011     1N6AD0CW4AC543602
+         8 22 Sep 2016 01:09:00          Tennessee Park, Richmond, 3121                                                                              100   10000014 100011     1N6AD0CW4AC543602
+         9 10 Jan 2017 12:45:00          Bandra Pass, Clifton Hill, 3068                                                                             131   10000011 100034     JN8AZ08W77W77W642
+        10 10 Jan 2017 14:39:00          Princes Hwy and Springvale Rd intersect, Springvale, 3171                                                   100   10000011 100003     YV2E4C314WB197869
+        11 10 Jan 2017 14:19:00          Railway Crossing, Wallan, 3756                                                                              100   10000016 100018     5UXZV4C52BL739734
+        12 10 Jan 2017 14:19:00          Railway Crossing, Wallan, 3756                                                                              101   10000016 100018     5UXZV4C52BL739734
+        13 08 Mar 2017 01:12:00          Messerschmidt Drive, Melbourne, 3000                                                                        124   10000021 100034     JN8AZ08W77W77W642
+        14 28 Mar 2017 12:18:00          Grasskamp Parkway, Lysterfield, 3156                                                                        131   10000012 100073     2T1FF22P01C442928
+        15 01 Apr 2017 06:11:00          Debra Terrace, South Yarra, 3141                                                                            100   10000013 100011     1N6AD0CW4AC543602
+        16 08 Sep 2017 17:01:00          7th Avenue, Melbourne, 3000                                                                                 113   10000011 100074     JM1TA2213Y1616325
+        17 17 Jan 2018 23:10:00          Tennessee Park, Richmond, 3121                                                                              100   10000011 100018     2T1FF22P01C442928
+        18 12 Feb 2018 06:10:00          Railway Crossing, Wallan, 3756                                                                              101   10000011 100100     ZA9DU01B01LA12597
+        19 15 Apr 2018 19:19:00          Lunder Junction, Clayton South, 3169                                                                        100   10000014 100068     JT2ST87F2N0122335
+        20 25 Jul 2018 20:29:00          Killdeer Point, Belgrave Heights, 3160                                                                      127   10000019 100060     SALTK12471A294286
+        21 29 Jul 2018 22:20:00          Rusk Center, Pakenham Upper, 3810                                                                           100   10000011 100034     JN8AZ08W77W77W642
+        22 10 Oct 2018 09:20:00          Buena Vista Pass, Leongatha, 3953                                                                           103   10000015 100081     5UXZW0C50C0B88196
+        23 20 Dec 2018 06:20:00          Kings Center, Attwood, 3049                                                                                 100   10000007 100003     YV2E4C314WB197869
+        24 19 Jan 2019 14:34:00          Valley Edge Plaza, Clayton, 3168                                                                            127   10000011 100082     5YJSA1S1XFFP78690
+        25 21 Feb 2019 10:32:00          Glacier Hill Pass, Melbourne, 3000                                                                          101   10000010 100011     1N6AD0CW4AC543602
+        26 29 Apr 2019 13:14:00          Grasskamp Parkway, Lysterfield, 3156                                                                        125   10000016 100061     4V5KC9GF38N491144
+        27 05 May 2019 04:04:00          Bandra Pass, Clifton Hill, 3068                                                                             128   10000013 100064     2T1FF22P01C442928
+        28 01 Jun 2019 11:33:00          Messerschmidt Drive, Melbourne, 3000                                                                        113   10000014 100001     JA3BF46D9GZ058377
+        29 12 Jun 2019 14:30:00          Bartelt Rd, Clifton Hill, 3068                                                                              128   10000019 100044     ZA9DU01B01LA12597
+
+29 rows selected. 
+
+SQL> -- Check no offences by Lion Lawless
+SQL> set echo off
+no rows selected
+SQL> -- Check date range for offences 
+SQL> -- within 1st January 2016 and 30th June 2019 with at least 4 per year
+SQL> set echo off
+
+OFFENCEYEAR Offence Count in Range
+----------- ----------------------
+       2016                      8
+       2017                      8
+       2018                      7
+       2019                      6
+
+SQL> -- Check date range for offences -  outside 1st January 2016 and 30th June 2019
+SQL> set echo off
+no rows selected
+SQL> -- Check: Offences that you add must involve at least 12 different drivers.
+SQL> set echo off
+
+DISTINTDRIVERS
+--------------
+            15
+
+SQL> -- Identify drivers who should be suspended
+SQL> set echo off
+
+LIC_NO     SUM(DEM_POINTS)
+---------- ---------------
+100011                  20
+100018                  24
+
+SQL> -- Check Suspensions
+SQL> --------------------
+SQL> set echo off
+
+LIC_NO     SUSP_START           SUSP_END            
+---------- -------------------- --------------------
+100018     08 Jul 2016          08 Jan 2017         
+100011     22 Sep 2016          22 Mar 2017         
+100018     17 Jan 2018          17 Jul 2018         
+
+SQL> -- Check suspension connection to offence
+SQL> set echo off
+
+LIC_NO         OFF_NO OFF_DATE_TIME                 SUSP_START           SUSP_END             ENDCHECK                    
+---------- ---------- ----------------------------- -------------------- -------------------- ----------------------------
+100018              6 08 Jul 2016 05:55:00          08 Jul 2016          08 Jan 2017          Valid Suspension End        
+100011              8 22 Sep 2016 01:09:00          22 Sep 2016          22 Mar 2017          Valid Suspension End        
+100018             17 17 Jan 2018 23:10:00          17 Jan 2018          17 Jul 2018          Valid Suspension End        
+
+SQL> -- Check that no offences have been added while the driver is suspended
+SQL> set echo off
+
+SUS_DATE  SUS_ENDDA OFFDURINGSUSPENSION
+--------- --------- -------------------
+08/JUL/16 08/JAN/17                   0
+22/SEP/16 22/MAR/17                   0
+17/JAN/18 17/JUL/18                   0
+
+SQL> ------------- Replace student data with marking data ------------------------------
+SQL> set echo off
+SQL> -------------- Data Replaced ------------------------------------------------------
+SQL> 
+SQL> ------------- Run student scripts --------------------------------------------------
+SQL> 
+SQL> set echo on
+SQL> ------------- Question 1b DML --------------------------------------------------
+SQL> 
+SQL> @Q1b-tds-dm.sql
+SQL> -- FIT9132 Assignment 2 2020 S1
+SQL> -- Sample Solution
+SQL> 
+SQL> SET SERVEROUTPUT ON;
+SQL> 
+SQL> /* 
+SQL>1b i) Create a sequence which will allow entry of data into the OFFENCE table - the sequence must begin at 100 and go up in steps
+SQL>of 1 (i.e., the first value is 1, the next 2, etc.) 
+SQL>*/
+SQL> 
+SQL> DROP SEQUENCE offence_seq;
+
+Error starting at line : 11 File @ /Volumes/GoogleDrive/Shared drives/FIT9132 Tutor Support/Assessments/Ass2/Marking Guide-Scripts/Q1/Sample Solution/Q1b-tds-dm.sql
+In command -
+DROP SEQUENCE offence_seq
+Error report -
+ORA-02289: sequence does not exist
+02289. 00000 -  "sequence does not exist"
+*Cause:    The specified sequence does not exist, or the user does
+           not have the required privilege to perform this operation.
+*Action:   Make sure the sequence name is correct, and that you have
+           the right to perform the desired operation on this sequence.
+SQL> 
+SQL> CREATE SEQUENCE offence_seq START WITH 100 INCREMENT BY 1;
+
+Sequence OFFENCE_SEQ created.
+
+SQL> 
+SQL> 
+SQL> /*
+SQL>1b ii) Lion Lawless of 72 Aberg Avenue Richmond South 3121 (Licence no.: 100389) has been very inconsiderate of others on the road
+SQL>over the years and has committed several offences that are booked by highly vigilant TDS officers at various different locations.
+SQL>Lion Lawless was riding the same motorbike 1994 Red Yamaha FZR600 (JYA3HHE05RA070562) at the time of committing these offences
+SQL>and that there are no more offences committed by this driver. The details of the bookings for Dolphie are as follows:
+SQL>10-Aug-2019 08:04 AM booked for traffic offence "Blood alcohol charge" by police officer Dolley Hedling (10000011)
+SQL>On 16-Oct-2019 9:00 PM booked for traffic offence "Level crossing offence" by police officer Geoff Kilmartin (10000015)
+SQL>On 7-Jan-2020 7:07 AM booked for traffic offences "Exceeding the speed limit by 25 km/h or more" by police officer Geoff Kilmartin (10000015)
+SQL>*/
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      offence_seq.NEXTVAL,
+  3      TO_DATE('10-Aug-2019 8:04 AM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Bartelt Rd, Clifton Hill, 3068',
+  5      (
+  6          SELECT
+  7              dem_code
+  8          FROM
+  9              demerit
+ 10          WHERE
+ 11              dem_description = 'Blood alcohol charge'
+ 12      ),
+ 13      10000011,
+ 14      '100389',
+ 15      'JYA3HHE05RA070562'
+ 16  );
+Driver 100389 has never been suspended.
+Excluding this offence, driver 100389 has incurred 0 demerit points. These points are calculated from 10/AUG/16 to 10/AUG/19. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 4.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      offence_seq.NEXTVAL,
+  3      TO_DATE('16-Oct-2019 9:00 PM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Bartelt Rd, Clifton Hill, 3068',
+  5      (
+  6          SELECT
+  7              dem_code
+  8          FROM
+  9              demerit
+ 10          WHERE
+ 11              dem_description = 'Level crossing offence'
+ 12      ),
+ 13      10000015,
+ 14      '100389',
+ 15      'JYA3HHE05RA070562'
+ 16  );
+Driver 100389 has never been suspended.
+Excluding this offence, driver 100389 has incurred 4 demerit points. These points are calculated from 16/OCT/16 to 16/OCT/19. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 8.
+
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> INSERT INTO offence VALUES (
+  2      offence_seq.NEXTVAL,
+  3      TO_DATE('7-Jan-2020 7:07 AM', 'DD-MON-YYYY HH:MI AM'),
+  4      'Tennessee Park, Richmond, 3121',
+  5      (
+  6          SELECT
+  7              dem_code
+  8          FROM
+  9              demerit
+ 10          WHERE
+ 11              dem_description = 'Exceeding the speed limit by 25 km/h or more'
+ 12      ),
+ 13      10000015,
+ 14      '100389',
+ 15      'JYA3HHE05RA070562'
+ 16  );
+Driver 100389 has never been suspended.
+Excluding this offence, driver 100389 has incurred 8 demerit points. These points are calculated from 07/JAN/17 to 07/JAN/20. Demerit point/s incurred for this offence is/are 4.
+Total points NOW are: 12.
+
+
+1 row inserted.
+
+SQL> --must not do manual calculation to get suspension end date
+SQL> 
+SQL> INSERT INTO suspension VALUES (
+  2      '100389',
+  3      TO_DATE('7-Jan-2020', 'DD-MON-YYYY'),
+  4      add_months(TO_DATE('7-Jan-2020', 'DD-MON-YYYY'), 6)
+  5  );
+
+1 row inserted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> /*
+SQL>(iii) Lion Lawless of 72 Aberg Avenue Richmond South 3121 (Licence no.: 100389) had appealed against "Exceeding the speed limit
+SQL>by 25 km/h or more" offence he has been alleged to have committed on 07-Jan-2020 at 7:07 AM. 
+SQL>
+SQL>After careful consideration and taking into account that speed guns at times are not very accurate, TDS has decided to lessen
+SQL>the offence to "Exceeding the speed limit by 10 km/h or more but less than 25 km/h" but has strongly warned Lion Lawless to be more
+SQL>careful in future. Take the necessary steps in the database to record this change.
+SQL>*/
+SQL> 
+SQL> UPDATE offence
+  2  SET
+  3      dem_code = (
+  4          SELECT
+  5              dem_code
+  6          FROM
+  7              demerit
+  8          WHERE
+  9              dem_description = 'Exceeding the speed limit by 10 km/h or more but less than 25 km/h'
+ 10      )
+ 11  WHERE
+ 12      dem_code = (
+ 13          SELECT
+ 14              dem_code
+ 15          FROM
+ 16              demerit
+ 17          WHERE
+ 18              dem_description = 'Exceeding the speed limit by 25 km/h or more'
+ 19      )
+ 20      AND lic_no = '100389'
+ 21      AND off_datetime = TO_DATE('7-Jan-2020 7:07 AM', 'DD-MON-YYYY HH:MI AM');
+
+1 row updated.
+
+SQL> 
+SQL> DELETE FROM suspension
+  2  WHERE
+  3      lic_no = '100389'
+  4      AND sus_date = TO_DATE('7-Jan-2020', 'DD-MON-YYYY');
+
+1 row deleted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> set echo on
+SQL> --============================== END Q1 RUN ======================================---
+SQL> set echo off
