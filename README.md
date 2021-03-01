@@ -44,7 +44,6 @@ their last suspension ended.
 Police officers are identified by an officer id. The system only records the officer's first
 name and last name.
 
-A data model has been created for Traffic Demerit System and is shown below (it is also
-available from Moodle):
+A data model has been created for Traffic Demerit System and is shown below:
 
 ![image](https://user-images.githubusercontent.com/79569693/109511620-2f4f8100-7ade-11eb-817a-60a37bc97e8d.png)
