@@ -1,4 +1,5 @@
 # Database
+Background
 The local state government wishes to develop a database to record the details of
 "on-the-spot" traffic offences incurred by drivers. When a driver commits an offence they
 are stopped and booked "on the spot" by a police officer and provided with an offence
