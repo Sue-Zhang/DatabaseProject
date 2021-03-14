@@ -1,5 +1,6 @@
 # Database
-Background
+1. Background
+
 The local state government wishes to develop a database to record the details of
 "on-the-spot" traffic offences incurred by drivers. When a driver commits an offence they
 are stopped and booked "on the spot" by a police officer and provided with an offence
@@ -45,6 +46,6 @@ their last suspension ended.
 Police officers are identified by an officer id. The system only records the officer's first
 name and last name.
 
-A data model has been created for Traffic Demerit System and is shown below:
+2. A data model has been created for Traffic Demerit System and is shown below:
 
 ![image](https://user-images.githubusercontent.com/79569693/109511620-2f4f8100-7ade-11eb-817a-60a37bc97e8d.png)
